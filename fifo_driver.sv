@@ -79,7 +79,7 @@ class fifo_write_driver #(parameter DATA_WIDTH = 8);
         fifo_transaction #(DATA_WIDTH) trans;
 
         // 等待复位释放后再开始处理事务
-        // iff 是 SV 的等待条件：等到 rrst_n=1 的那个上升沿
+        // iff 是 SV 的等待条件：等到 wrst_n=1 的那个上升沿
         @(posedge vif.wclk iff vif.wrst_n);
         @(vif.write_cb);  // 再等一个周期，确保时序稳定
 
