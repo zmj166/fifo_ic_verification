@@ -1,4 +1,48 @@
-// ============================================================================
+
+
+好的，稍微展开一点：
+
+1. 为什么每次都要重新定义变量？
+
+因为每个任务/函数都有自己的作用域。就像每个房间可以有独立的桌子，桌子上都可以放一个叫“trans”的盒子，但它们是不同的物理盒子。
+
+```systemverilog
+task run_write();
+    // 这个 trans 只属于 run_write
+    fifo_transaction trans;
+endtask
+
+task run_read();
+    // 这个 trans 只属于 run_read，和上面的完全独立
+    fifo_transaction trans;  
+endtask
+```
+
+如果共用同一个变量，两个并行运行的线程就会互相踩踏——你改我也改，数据全乱套。
+
+2. 多个 run 任务是一起执行吗？
+
+是的，并行执行。
+
+```systemverilog
+task run();
+    fork
+        run_write();  // 线程1： forever 循环，监听写操作
+        run_read();   // 线程2： forever 循环，监听读操作
+    join
+endtask
+```
+
+· fork...join 会同时启动两个 forever 循环
+· run_write() 一直在等写操作，run_read() 一直在等读操作
+· 就像两个人同时工作：一个负责记账（写），一个负责核对（读）
+
+最终效果：写操作和读操作是并发发生的，Scoreboard 通过这两个并行线程实时处理。
+
+
+
+
+
 // 文件名 : fifo_env.sv
 // 功  能 : 验证环境顶层（Verification Environment）
 //
