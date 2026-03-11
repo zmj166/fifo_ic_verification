@@ -102,7 +102,7 @@ module fifo_tb_top;
     // 含义：rempty 为高且没有读操作时，下一拍 rempty 保持高
     // 说明：这个断言已修改为永真条件（|=> 右边永远为真），
     //       原因是"写入数据导致 rempty 从 1 变 0"是完全合法的行为，
-    //       原断言会误报。真正的 rempty 逻辑正确性由 Scoreboard 保证。
+    //       原断言会误报。真正的 rempty 逻辑正确性由 Scoreboard 保证。。。。修改了
     property rempty_stable;
         @(posedge rclk) disable iff (!read_if.rrst_n)
         // 条件：rempty=1 且 rinc=0（没有读操作）
